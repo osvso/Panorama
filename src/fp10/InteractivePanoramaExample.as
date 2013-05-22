@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Panorama() Example Code by MSFX Matt Stuttard
  * Version 1.0
  * 15.04.2012
@@ -44,6 +44,9 @@ package
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import uk.msfx.view3d.panorama.fp10.InteractivePanorama;
+	import flash.display.Loader;
+	import flash.net.URLRequest;
+	import flash.display.LoaderInfo;
 	
 	
 	/**
@@ -59,6 +62,9 @@ package
 		// spacing
 		protected var spacing:int = 10;
 		
+		
+		// panoramaImage path from flashVars
+		protected var panoramaPath:String;
 		
 		/**
 		 * Interactive Panorama Example 
@@ -82,6 +88,16 @@ package
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			
+			// read flashVars
+			panoramaPath = stage.loaderInfo.parameters["panoramaPath"];
+			
+			if(panoramaPath == null) {
+				trace("panoramaPath property not set!");
+				return;
+			}
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onImageLoaded);
+			loader.load(new URLRequest(panoramaPath));
 			
 			/**
 			 * 1) Standard Image Example
@@ -93,13 +109,15 @@ package
 			 * can then pass it to the panorama to render.
 			 */
 			
-			// create the image (source: http://en.wikipedia.org/wiki/File:Very_Large_Telescope_Ready_for_Action.jpg)
-			var image:BitmapData = new PanoramicImage();
+		}
+		
+		private function onImageLoaded(e:Event):void {
+			
+			var image:BitmapData = e.target.content.bitmapData;
 			
 			// create the BitmapMaterial to pass to the panorama
 			var imageForPanorama:BitmapMaterial = new BitmapMaterial(image);
 			imageForPanorama.smooth = true;
-			
 			
 			/**
 			 * 2) Interactive MovieClip Example
